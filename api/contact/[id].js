@@ -1,8 +1,17 @@
-// api/contact/[id].js
 const axios = require("axios");
 
 module.exports = async (req, res) => {
-  const contactId = req.query.id; // dynamic from URL like /contact/123
+  // ✅ Set CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "https://trtaustralia-portal.com");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ✅ Handle preflight OPTIONS request (for safety)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  const contactId = req.query.id;
   const apiKey = process.env.HUBSPOT_API_KEY;
 
   if (!contactId) {
@@ -38,7 +47,7 @@ module.exports = async (req, res) => {
           hs_number: invoiceRes.data.properties.hs_number,
         });
       } catch (invoiceError) {
-        console.error(`Failed to fetch invoice ${invoiceId}`, invoiceError?.response?.data || invoiceError.message);
+        console.error(`❌ Failed to fetch invoice ${invoiceId}`, invoiceError?.response?.data || invoiceError.message);
       }
     }
 
